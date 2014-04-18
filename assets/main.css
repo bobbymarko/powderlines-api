@@ -1,0 +1,8 @@
+body {
+  font: 1rem/2 sans-serif;
+}
+
+#editor-render-0 {
+  width: 400px;
+  height: 400px;
+}
