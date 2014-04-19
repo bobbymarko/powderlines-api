@@ -8,14 +8,14 @@ $(function() {
       o;
     
     $.ajax({
-      url: '/station/418',
+      url: '/station/418:WA:SNTL',
       jsonp: "callback",
       dataType: "jsonp",
       data: {
         days: 100
       },
       success: function(data) {
-        $.each(data, function() {
+        $.each(data.data, function() {
           d1.push([new Date(this["Date"]).getTime(), this["Snow Depth (in)"]]);
           graph = drawGraph(); 
         })

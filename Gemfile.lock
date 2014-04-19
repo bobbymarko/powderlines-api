@@ -3,6 +3,7 @@ GEM
   specs:
     haml (4.0.4)
       tilt
+    haversine (0.3.0)
     multi_json (1.9.2)
     rack (1.5.2)
     rack-protection (1.5.3)
@@ -14,6 +15,7 @@ GEM
     sinatra-jsonp (0.4.3)
       multi_json (~> 1.8)
       sinatra (~> 1.0)
+    static_model (1.0.4)
     tilt (1.4.1)
 
 PLATFORMS
@@ -21,5 +23,7 @@ PLATFORMS
 
 DEPENDENCIES
   haml
+  haversine
   sinatra
   sinatra-jsonp
+  static_model
