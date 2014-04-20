@@ -3,6 +3,8 @@ powderlines-api
 
 API for accessing SNOTEL stations. Useful for finding current snow levels across a state. All endpoints accept a callback parameter for JSONP.
 
+To run locally - clone the repo, run "bundle install", run 'rackup', navigate to http://localhost:9292
+
 Access list of 800+ SNOTEL stations:
 
 http://snotel.herokuapp.com/stations
