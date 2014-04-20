@@ -34,7 +34,10 @@ class Snotel < Sinatra::Base
     lat = params[:lat].to_f
     lng = params[:lng].to_f
     days = params[:days] || 5
-    count = params[:count] || 3
+    count = params[:count].to_i || 3
+    # limit count to 10
+    count = 10 if count > 10
+    # data determines whether we fetch snow data for the stations
     data = params[:data] ? true : false
     
     stations = Array.new
