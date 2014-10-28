@@ -18,7 +18,7 @@ $(function() {
         $.each(data.data, function() {
           d1.push([new Date(this["Date"]).getTime(), this["Snow Depth (in)"]]);
           graph = drawGraph(); 
-        })
+        });
       }
     });
           
