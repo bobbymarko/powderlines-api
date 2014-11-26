@@ -5,6 +5,7 @@ GEM
       tilt
     haversine (0.3.0)
     multi_json (1.9.2)
+    newrelic_rpm (3.6.8.168)
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
@@ -25,6 +26,7 @@ PLATFORMS
 DEPENDENCIES
   haml
   haversine
+  newrelic_rpm
   rack-timeout
   sinatra
   sinatra-jsonp

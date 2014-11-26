@@ -8,6 +8,7 @@ class Snotel < Sinatra::Base
   require 'net/http'
   require 'csv'
   require 'json'
+  require 'newrelic_rpm'
   helpers Sinatra::Jsonp
   # set :show_exceptions, false
 
@@ -67,6 +68,10 @@ class Snotel < Sinatra::Base
   end
   
   error Rack::Timeout::RequestTimeoutError do
+    NewRelic::Agent.instance.error_collector.notice_error 'RequestTimeoutError',
+      uri: request.path,
+      referer: request.referer,
+      request_params: request.params
     halt 503, { 'Content-Type' => 'application/json' }, JSON.dump({
       message: "Sorry, but SNOTEL is taking longer than 30 seconds to respond to us. Please try again."
     })
@@ -105,5 +110,5 @@ end
 
 class Station < StaticModel::Base
   attr_accessor :distance
-  set_data_file 'stations.yml'
+  set_data_file 'config/stations.yml'
 end

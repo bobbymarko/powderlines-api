@@ -4,3 +4,4 @@ node_modules
 .sass-cache
 npm-debug.log
 grunt-aws.json
+log/
