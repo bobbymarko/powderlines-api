@@ -9,6 +9,7 @@ class Snotel < Sinatra::Base
   require 'csv'
   require 'json'
   helpers Sinatra::Jsonp
+  # set :show_exceptions, false
 
   get '/' do
     haml :index
@@ -23,24 +24,26 @@ class Snotel < Sinatra::Base
   end
 
   get '/station/:id' do
-    id = params[:id] #672
+    id = params[:id] #672:WA:SNTL
     days = params[:days] || 5
     start_date = params[:start_date] || false
     end_date = params[:end_date] || params[:start_date]
-    station = Station.find_by_triplet(id)
+    station = Station.find_by_triplet(id) || halt(404)
 
     jsonp :station_information => station.attributes, :data => get_data(id, days, start_date, end_date)
   end
   
   get '/closest_stations' do
-    lat = params[:lat].to_f
-    lng = params[:lng].to_f
-    days = params[:days] || 5
-    count = params[:count].to_i || 3
+    lat = params[:lat] ? params[:lat].to_f : halt(400)
+    lng = params[:lng] ? params[:lng].to_f : halt(400)
+    days = params[:days] ? params[:days].to_i : 5
+    count = params[:count] ? params[:count].to_i : 3
     # limit count to 10
-    count = 10 if count > 10
+    if count > 10
+      count = 10
+    end
     # data determines whether we fetch snow data for the stations
-    data = params[:data] ? true : false
+    data = params[:data] == 'true' ? true : false
     
     stations = Array.new
     
@@ -63,6 +66,12 @@ class Snotel < Sinatra::Base
     jsonp stations
   end
   
+  error Rack::Timeout::RequestTimeoutError do
+    halt 503, { 'Content-Type' => 'application/json' }, JSON.dump({
+      message: "Sorry, but SNOTEL is taking longer than 30 seconds to respond to us. Please try again."
+    })
+  end
+  
   private
   
   def get_data(id, days, start_date = false, end_date = false)
@@ -79,6 +88,7 @@ class Snotel < Sinatra::Base
 
     uri = URI("http://www.wcc.nrcs.usda.gov/reportGenerator/view_csv/customSingleStationReport/daily/#{id}%7Cid%3D%22%22%7Cname/#{date}%2C0/WTEQ%3A%3Avalue%2CWTEQ%3A%3Adelta%2CSNWD%3A%3Avalue%2CSNWD%3A%3Adelta")
     json = Net::HTTP.get(uri)
+    
     json_filtered = json.gsub(/(^#.+|#)/, '').gsub(/^\s+/, "") # remove comments at top of file
     
     lines = CSV.parse(json_filtered)
