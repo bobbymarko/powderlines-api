@@ -67,6 +67,23 @@ class Snotel < Sinatra::Base
     jsonp stations
   end
   
+  get '/deepest_stations' do
+    count = params[:count] ? params[:count].to_i : 10
+    
+    stations = Array.new
+    
+    Station.all.each do |station| # This will never work with a 29 second timeout. Need to find a better way.
+      stations << { 
+        :station_information => get_data(station.attributes["triplet"], 1)
+      }
+    end
+    
+    stations = stations.sort_by{|x| x[:station_information]["Snow Depth (in)"] }.take(count)
+    
+
+    jsonp stations
+  end
+  
   error Rack::Timeout::RequestTimeoutError do
     NewRelic::Agent.instance.error_collector.notice_error 'RequestTimeoutError',
       uri: request.path,
@@ -82,8 +99,9 @@ class Snotel < Sinatra::Base
   def get_data(id, days, start_date = false, end_date = false)
     # data sourced from http://www.wcc.nrcs.usda.gov/reportGenerator
     
-    # http://www.wcc.nrcs.usda.gov/reportGenerator/view/customSingleStationReport/daily/549:NV:SNTL%7Cid=%22%22%7Cname/2013-01-15,2013-01-18/SNWD::value
-    # http://www.wcc.nrcs.usda.gov/reportGenerator/view_csv/customSingleStationReport/daily/#{id}%7Cid%3D%22%22%7Cname/-#{days}%2C0/WTEQ%3A%3Avalue%2CWTEQ%3A%3Adelta%2CSNWD%3A%3Avalue%2CSNWD%3A%3Adelta
+    # http://wcc.sc.egov.usda.gov/reportGenerator/view_csv/customSingleStationReport/daily/549:NV:SNTL%7Cid=%22%22%7Cname/2013-01-15,2013-01-18/SNWD::value
+    # http://wcc.sc.egov.usda.gov/reportGenerator/view_csv/customSingleStationReport/daily/#{id}%7Cid%3D%22%22%7Cname/-#{days}%2C0/WTEQ%3A%3Avalue%2CWTEQ%3A%3Adelta%2CSNWD%3A%3Avalue%2CSNWD%3A%3Adelta
+
 
     if start_date
       date = "#{start_date},#{end_date}"
@@ -91,7 +109,7 @@ class Snotel < Sinatra::Base
       date = "-#{days}"
     end
 
-    uri = URI("http://www.wcc.nrcs.usda.gov/reportGenerator/view_csv/customSingleStationReport/daily/#{id}%7Cid%3D%22%22%7Cname/#{date}%2C0/WTEQ%3A%3Avalue%2CWTEQ%3A%3Adelta%2CSNWD%3A%3Avalue%2CSNWD%3A%3Adelta")
+    uri = URI("http://wcc.sc.egov.usda.gov/reportGenerator/view_csv/customSingleStationReport/daily/#{id}%7Cid%3D%22%22%7Cname/#{date}%2C0/WTEQ%3A%3Avalue%2CWTEQ%3A%3Adelta%2CSNWD%3A%3Avalue%2CSNWD%3A%3Adelta")
     json = Net::HTTP.get(uri)
     
     json_filtered = json.gsub(/(^#.+|#)/, '').gsub(/^\s+/, "") # remove comments at top of file
