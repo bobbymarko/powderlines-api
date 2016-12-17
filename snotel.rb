@@ -122,6 +122,22 @@ class Snotel < Sinatra::Base
     
     lines = CSV.parse(json_filtered)
     keys = lines.delete lines.first
+    
+    # The USDA changes the names of the keys in 2016 so we convert them back to their old names    
+    keys.map! do |key|
+      case key
+        when "Snow Water Equivalent (in) Start of Day Values"
+          key = "Snow Water Equivalent (in)"
+        when "Change In Snow Water Equivalent (in)"
+          key = "Change In Snow Water Equivalent (in)"
+        when "Snow Depth (in) Start of Day Values"
+          key = "Snow Depth (in)"
+        when "Change In Snow Depth (in)"
+          key = "Change In Snow Depth (in)"
+        when "Air Temperature Observed (degF) Start of Day Values"
+          key = "Observed Air Temperature (degrees farenheit)"
+      end
+    end
      
     data = lines.map do |values|
       Hash[keys.zip(values)]
