@@ -136,6 +136,8 @@ class Snotel < Sinatra::Base
           key = "Change In Snow Depth (in)"
         when "Air Temperature Observed (degF) Start of Day Values"
           key = "Observed Air Temperature (degrees farenheit)"
+        else
+          key = key
       end
     end
      
