@@ -3,6 +3,8 @@ Powderlines SNOTEL API
 
 Documentation for the API is here: http://powderlin.es/api.html
 
+NodeJS port of server is here: https://github.com/dpk5e7/powderlines-js
+
 TODO:
 
 * Add additional data sources. We could use snow data from avalanche centers. For instance here is the data for Washington from NWAC: http://data.nwac.us/ALL.
