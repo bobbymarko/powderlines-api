@@ -1,3 +1,5 @@
+This project is archived as there is an official SNOTEL REST API now https://wcc.sc.egov.usda.gov/awdbRestApi/swagger-ui/index.html
+
 Powderlines SNOTEL API
 ===============
 
